@@ -33,6 +33,9 @@ from matplotlib.colors import ListedColormap
 #MATRIZ CONFUSION
 from sklearn.metrics import confusion_matrix
 
+#ESPACIO ROC
+from sklearn.metrics import roc_curve,roc_auc_score
+
 mpl.rc('axes', labelsize=4)
 mpl.rc('xtick', labelsize=12)
 mpl.rc('ytick', labelsize=12)
@@ -138,7 +141,12 @@ def main():
     y_pred = tree_clf.predict(X_test)
     conf_matrix = confusion_matrix(y_test,y_pred)
     print(conf_matrix)
-    #VISUALIZAR LAS PARTICIONES GENERADAS POR CADA SPLIT SOLO PARA DATA SET IRIS
+
+    
+
+    
+
+    #VISUALIZAR LAS PARTICIONES GENERADAS POR CADA SPLIT (SOLO PARA DATA SET IRIS)
     
     plt.figure(figsize=(8,4))
     print("Este es X")
@@ -216,6 +224,14 @@ def main():
     precision2 = tree_clf2.score(X_test,y_test)
     print("Precision con datos prueba: " , precision2)
 
+    #MATRIZ DE CONFUSION
+    print("Matriz de confusion")
+    y_pred = tree_clf.predict(X_test)
+    conf_matrix = confusion_matrix(y_test,y_pred)
+    print(conf_matrix)
+
+    
+
 
     ##-----------------------------------------DATA SET CANCER --------------------------------
     data_cancer = load_breast_cancer()
@@ -269,6 +285,23 @@ def main():
 
     precision2 = tree_clf2.score(X_test,y_test)
     print("Precision con datos prueba: " , precision2)
+
+    #MATRIZ DE CONFUSION
+    print("Matriz de confusion")
+    y_pred = tree_clf.predict(X_test)
+    conf_matrix = confusion_matrix(y_test,y_pred)
+    print(conf_matrix)
+
+    #ESPACIO ROC
+    y_score1 = tree_clf.predict_proba(X_test)[:,1]
+    false_positive_rate1 , true_positive_rate1,threshold1 = roc_curve(y_test,y_score1)
+    print("roc_auc_score data set cancer" , roc_auc_score(y_test,y_score1))
+
+    plt.plot(1)
+    plt.title("Data set cancer")
+    plt.plot(false_positive_rate1,true_positive_rate1,color="blue")
+
+    plt.show()
 
 main()
 

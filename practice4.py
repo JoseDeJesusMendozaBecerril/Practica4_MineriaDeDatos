@@ -30,6 +30,8 @@ from sklearn import *
 #PARTICIONES
 from matplotlib.colors import ListedColormap
 
+#MATRIZ CONFUSION
+from sklearn.metrics import confusion_matrix
 
 mpl.rc('axes', labelsize=4)
 mpl.rc('xtick', labelsize=12)
@@ -109,7 +111,7 @@ def main():
 
 
     #PRUEBA MODELO - TEST
-    tree_clf2 = tree_clf.fit(X_train,y_train)
+    tree_clf2 = tree_clf.fit(X_test,y_test)
     
     export_graphviz(
             tree_clf2,
@@ -123,24 +125,38 @@ def main():
 
     
 
-    #CALCULO DE LA PRECISION DEL MODELO 
+    #CALCULO DE LA PRECISION DEL MODELO
+    print("DATA SET IRIS") 
     precision = tree_clf.score(X_train,y_train)
     print("Precision con datos entrenamiento: " , precision)
 
     precision2 = tree_clf2.score(X_test,y_test)
     print("Precision con datos prueba: " , precision2)
     
+    #MATRIZ DE CONFUSION
+    print("Matriz de confusion")
+    y_pred = tree_clf.predict(X_test)
+    conf_matrix = confusion_matrix(y_test,y_pred)
+    print(conf_matrix)
     #VISUALIZAR LAS PARTICIONES GENERADAS POR CADA SPLIT SOLO PARA DATA SET IRIS
     
     plt.figure(figsize=(8,4))
     print("Este es X")
     
-    plot_decision_boundary(tree_clf,X,y)
+    plot_decision_boundary(tree_clf,X_train,y_train)
     plt.plot([2.45,2.45],[0,3],"k-",linewidth=2)
     plt.plot([2.45,7.5],[1.75,1.75],"k--",linewidth=2)
     plt.text(1.40,1.0,"Depth=0",fontsize=15)
     plt.text(3.2,1.80,"Depth=1",fontsize=13)
-    save_fig("decision_tree_decision_boundaries_plot")
+    save_fig("decision_tree_decision_boundaries_plot_train")
+    plt.show()
+
+    plot_decision_boundary(tree_clf,X_test,y_test)
+    plt.plot([2.45,2.45],[0,3],"k-",linewidth=2)
+    plt.plot([2.45,7.5],[1.75,1.75],"k--",linewidth=2)
+    plt.text(1.40,1.0,"Depth=0",fontsize=15)
+    plt.text(3.2,1.80,"Depth=1",fontsize=13)
+    save_fig("decision_tree_decision_boundaries_plot_test")
     plt.show()
 
 
@@ -177,7 +193,7 @@ def main():
 
 
     #PRUEBA MODELO - TEST
-    tree_clf2 = tree_clf.fit(X_train,y_train)
+    tree_clf2 = tree_clf.fit(X_test,y_test)
     
     export_graphviz(
             tree_clf2,
@@ -191,6 +207,9 @@ def main():
 
     
     #CALCULO DE LA PRECISION DEL MODELO 
+
+    print("DATA SET WINE") 
+
     precision = tree_clf.score(X_train,y_train)
     print("Precision con datos entrenamiento: " , precision)
 
@@ -227,7 +246,7 @@ def main():
 
 
     #PRUEBA MODELO - TEST
-    tree_clf2 = tree_clf.fit(X_train,y_train)
+    tree_clf2 = tree_clf.fit(X_test,y_test)
     
     export_graphviz(
             tree_clf2,
@@ -241,6 +260,10 @@ def main():
 
     
     #CALCULO DE LA PRECISION DEL MODELO 
+
+    print("DATA SET CANCER") 
+
+
     precision = tree_clf.score(X_train,y_train)
     print("Precision con datos entrenamiento: " , precision)
 

@@ -34,7 +34,12 @@ from matplotlib.colors import ListedColormap
 from sklearn.metrics import confusion_matrix
 
 #ESPACIO ROC
-from sklearn.metrics import roc_curve,roc_auc_score
+from sklearn.metrics import roc_curve,roc_auc_score,auc
+from sklearn import preprocessing
+from sklearn.preprocessing import label_binarize
+
+#Iterable
+from itertools import cycle
 
 mpl.rc('axes', labelsize=4)
 mpl.rc('xtick', labelsize=12)
@@ -143,6 +148,7 @@ def main():
     print(conf_matrix)
 
     
+      
 
     
 
@@ -168,6 +174,42 @@ def main():
     plt.show()
 
 
+    #ESPACIO ROC
+    
+    #Binarize the output
+    y_test = label_binarize(y_test,classes=[0,1,2])
+
+
+    y_score1 = tree_clf.predict_proba(X_test)[:,1]
+    print("MI Y TEST",y_test)
+    
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+    for i in range(2):
+        fpr[i],tpr[i], _ = roc_curve(y_test[:,i] , y_score1)
+        roc_auc[i] = auc(fpr[i],tpr[i])
+
+    plt.figure()
+    lw=2
+
+    n_classes = 2
+    colors = ['aqua','darkorange' , 'cornflowerblue']
+
+    for i in range(n_classes):
+        plt.plot(fpr[i],tpr[i], color=colors[i],lw=lw,label='ROC Curve ')
+
+    plt.plot([0,1] , [0,1] , color="navy" , lw=lw , linestyle='--')
+
+    #plt.plot(fpr[0],tpr[0], color='red',
+    #    lw=lw,label='ROC Curve ')
+    plt.title("Data set wine")
+    plt.xlim([-0.5,1.5])
+    plt.ylim([-0.5,1.5])
+    plt.xlabel('False positive Rate') 
+    plt.xlabel('True positive Rate') 
+    #plt.title("ROC")
+    plt.show()  
 
 
      
@@ -230,7 +272,47 @@ def main():
     conf_matrix = confusion_matrix(y_test,y_pred)
     print(conf_matrix)
 
+
+    #ESPACIO ROC
     
+    #Binarize the output
+    y_test = label_binarize(y_test,classes=[0,1,2])
+
+
+    y_score1 = tree_clf.predict_proba(X_test)[:,1]
+    print("MI Y TEST",y_test)
+    
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+    for i in range(2):
+        fpr[i],tpr[i], _ = roc_curve(y_test[:,i] , y_score1)
+        roc_auc[i] = auc(fpr[i],tpr[i])
+
+    plt.figure()
+    lw=2
+
+    n_classes = 2
+    colors = ['aqua','darkorange' , 'cornflowerblue']
+
+    for i in range(n_classes):
+        plt.plot(fpr[i],tpr[i], color=colors[i],lw=lw,label='ROC Curve ')
+
+    plt.plot([0,1] , [0,1] , color="navy" , lw=lw , linestyle='--')
+
+    #plt.plot(fpr[0],tpr[0], color='red',
+    #    lw=lw,label='ROC Curve ')
+    plt.title("Data set wine")
+    plt.xlim([-0.5,1.5])
+    plt.ylim([-0.5,1.5])
+    plt.xlabel('False positive Rate') 
+    plt.xlabel('True positive Rate') 
+    #plt.title("ROC")
+    plt.show()
+    
+        
+
+
 
 
     ##-----------------------------------------DATA SET CANCER --------------------------------
@@ -274,7 +356,7 @@ def main():
     )
     Source.from_file(os.path.join(IMAGES_PATH,"cancer_tree_test.dot"))
 
-    
+
     #CALCULO DE LA PRECISION DEL MODELO 
 
     print("DATA SET CANCER") 
@@ -299,7 +381,9 @@ def main():
 
     plt.plot(1)
     plt.title("Data set cancer")
-    plt.plot(false_positive_rate1,true_positive_rate1,color="blue")
+    plt.plot(false_positive_rate1,true_positive_rate1,color="red")
+
+    plt.plot([0,1] , [0,1] , color="navy" , lw=lw , linestyle='--')
 
     plt.show()
 

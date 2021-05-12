@@ -466,7 +466,6 @@ def main():
     score_nb = nb.score(X_train,y_train)
     print("Score nb" , score_nb)
 
-
 main()
 
 

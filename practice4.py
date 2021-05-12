@@ -54,6 +54,15 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
+import matplotlib.pyplot as plt
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import label_binarize
+from sklearn.metrics import roc_curve, auc
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+
 mpl.rc('axes', labelsize=4)
 mpl.rc('xtick', labelsize=12)
 mpl.rc('ytick', labelsize=12)
@@ -105,10 +114,12 @@ def main():
     ##-----------------------------------------DATA SET IRIS --------------------------------
     #CARGO DATA SET
     iris = datasets.load_iris()
-    
+    #print("EL IRIS",iris)
     #DEFINO ATRIBUTOS Y VALORES DE SALIDA
     X = iris.data[:,:2]  # we only take the first two features.
     y = iris.target
+
+    
 
     #PARTIMOS DATA
     X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2)
@@ -160,16 +171,20 @@ def main():
     conf_matrix = confusion_matrix(y_test,y_pred)
     print(conf_matrix)
 
-    
-      
-
-    
 
     #VISUALIZAR LAS PARTICIONES GENERADAS POR CADA SPLIT (SOLO PARA DATA SET IRIS)
     
     plt.figure(figsize=(8,4))
     print("Este es X")
     
+    plot_decision_boundary(tree_clf,X,y)
+    plt.plot([2.45,2.45],[0,3],"k-",linewidth=2)
+    plt.plot([2.45,7.5],[1.75,1.75],"k--",linewidth=2)
+    plt.text(1.40,1.0,"Depth=0",fontsize=15)
+    plt.text(3.2,1.80,"Depth=1",fontsize=13)
+    save_fig("decision_tree_decision_boundaries_plot_completo")
+    plt.show()
+
     plot_decision_boundary(tree_clf,X_train,y_train)
     plt.plot([2.45,2.45],[0,3],"k-",linewidth=2)
     plt.plot([2.45,7.5],[1.75,1.75],"k--",linewidth=2)
@@ -185,44 +200,6 @@ def main():
     plt.text(3.2,1.80,"Depth=1",fontsize=13)
     save_fig("decision_tree_decision_boundaries_plot_test")
     plt.show()
-
-
-    #ESPACIO ROC
-    
-    #Binarize the output
-    y_test = label_binarize(y_test,classes=[0,1,2])
-
-
-    y_score1 = tree_clf.predict_proba(X_test)[:,1]
-    print("MI Y TEST",y_test)
-    
-    fpr = dict()
-    tpr = dict()
-    roc_auc = dict()
-    for i in range(2):
-        fpr[i],tpr[i], _ = roc_curve(y_test[:,i] , y_score1)
-        roc_auc[i] = auc(fpr[i],tpr[i])
-
-    plt.figure()
-    lw=2
-
-    n_classes = 2
-    colors = ['aqua','darkorange' , 'cornflowerblue']
-
-    for i in range(n_classes):
-        plt.plot(fpr[i],tpr[i], color=colors[i],lw=lw,label='ROC Curve ')
-
-    plt.plot([0,1] , [0,1] , color="navy" , lw=lw , linestyle='--')
-
-    #plt.plot(fpr[0],tpr[0], color='red',
-    #    lw=lw,label='ROC Curve ')
-    plt.title("Data set wine")
-    plt.xlim([-0.5,1.5])
-    plt.ylim([-0.5,1.5])
-    plt.xlabel('False positive Rate') 
-    plt.xlabel('True positive Rate') 
-    #plt.title("ROC")
-    plt.show()  
 
 
     #DESEMPEÑO RESPECTO A Regresion logistica - KNN - Naive Bayes 
@@ -247,6 +224,47 @@ def main():
 
     score_nb = nb.score(X_train,y_train)
     print("Score nb" , score_nb)
+
+
+     #ESPACIO ROC
+    iris = datasets.load_iris()
+    X = iris.data
+    y = iris.target
+
+    # Binarize the output
+    y = label_binarize(y, classes=[0, 1, 2])
+    n_classes = y.shape[1]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.5, random_state=0)
+
+    classifier = OneVsRestClassifier(DecisionTreeClassifier(random_state=0))
+    y_score = classifier.fit(X_train, y_train).predict_proba(X_test)
+
+    lw=2
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+    for i in range(n_classes):
+        fpr[i], tpr[i], _ = roc_curve(y_test[:, i], y_score[:, i])
+        roc_auc[i] = auc(fpr[i], tpr[i])
+    colors = cycle(['blue', 'red', 'green'])
+    for i, color in zip(range(n_classes), colors):
+        plt.plot(fpr[i], tpr[i], color=color, lw=lw,
+                label='ROC curve of class {0} (area = {1:0.2f})'
+                ''.format(i, roc_auc[i]))
+
+    plt.plot([0, 1], [0, 1], 'k--', lw=lw)
+    plt.xlim([-0.05, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic for multi-class data')
+    plt.legend(loc="lower right")
+    plt.show()
+
+
+
+
 
 
 
@@ -315,7 +333,7 @@ def main():
     y_test = label_binarize(y_test,classes=[0,1,2])
 
 
-    y_score1 = tree_clf.predict_proba(X_test)[:,1]
+    y_score1 = tree_clf.predict_proba(X_test)[:,2]
     
     fpr = dict()
     tpr = dict()

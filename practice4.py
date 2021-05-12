@@ -41,6 +41,19 @@ from sklearn.preprocessing import label_binarize
 #Iterable
 from itertools import cycle
 
+#Regresion Lineal
+from sklearn.linear_model import LogisticRegression
+
+#Naive Bayes
+from sklearn.naive_bayes import GaussianNB
+
+#KNN
+from sklearn.neighbors import KNeighborsClassifier
+
+#ESCALAR
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
 mpl.rc('axes', labelsize=4)
 mpl.rc('xtick', labelsize=12)
 mpl.rc('ytick', labelsize=12)
@@ -212,7 +225,30 @@ def main():
     plt.show()  
 
 
-     
+    #DESEMPEÑO RESPECTO A Regresion logistica - KNN - Naive Bayes 
+    pipe = make_pipeline(StandardScaler(), LogisticRegression())
+    pipe.fit(X_train,y_train)
+
+
+    clf = LogisticRegression()
+    knn = KNeighborsClassifier(algorithm='brute',n_neighbors=20)
+    nb = GaussianNB()
+
+    
+    knn.fit(X_train,y_train)
+    nb.fit(X_train,y_train)
+
+    score_clf = pipe.score(X_train,y_train)
+    print("Score clf",score_clf)
+    
+    score_knn = knn.score(X_train,y_train)
+    print("Score knn" , score_knn)
+
+
+    score_nb = nb.score(X_train,y_train)
+    print("Score nb" , score_nb)
+
+
 
     ##-----------------------------------------DATA SET WINE --------------------------------
     data_wine = load_wine()
@@ -280,7 +316,6 @@ def main():
 
 
     y_score1 = tree_clf.predict_proba(X_test)[:,1]
-    print("MI Y TEST",y_test)
     
     fpr = dict()
     tpr = dict()
@@ -310,8 +345,29 @@ def main():
     #plt.title("ROC")
     plt.show()
     
-        
+    
+    #DESEMPEÑO RESPECTO A Regresion logistica - KNN - Naive Bayes 
+    pipe = make_pipeline(StandardScaler(), LogisticRegression())
+    pipe.fit(X_train,y_train)
 
+
+    clf = LogisticRegression()
+    knn = KNeighborsClassifier(algorithm='brute',n_neighbors=20)
+    nb = GaussianNB()
+
+    
+    knn.fit(X_train,y_train)
+    nb.fit(X_train,y_train)
+
+    score_clf = pipe.score(X_train,y_train)
+    print("Score clf",score_clf)
+    
+    score_knn = knn.score(X_train,y_train)
+    print("Score knn" , score_knn)
+
+
+    score_nb = nb.score(X_train,y_train)
+    print("Score nb" , score_nb)
 
 
 
@@ -386,6 +442,30 @@ def main():
     plt.plot([0,1] , [0,1] , color="navy" , lw=lw , linestyle='--')
 
     plt.show()
+
+    #DESEMPEÑO RESPECTO A Regresion logistica - KNN - Naive Bayes 
+    pipe = make_pipeline(StandardScaler(), LogisticRegression())
+    pipe.fit(X_train,y_train)
+
+
+    clf = LogisticRegression()
+    knn = KNeighborsClassifier(algorithm='brute',n_neighbors=20)
+    nb = GaussianNB()
+
+    
+    knn.fit(X_train,y_train)
+    nb.fit(X_train,y_train)
+
+    score_clf = pipe.score(X_train,y_train)
+    print("Score clf",score_clf)
+    
+    score_knn = knn.score(X_train,y_train)
+    print("Score knn" , score_knn)
+
+
+    score_nb = nb.score(X_train,y_train)
+    print("Score nb" , score_nb)
+
 
 main()
 

@@ -22,6 +22,8 @@ from sklearn.datasets import load_breast_cancer
 from graphviz import Source
 from sklearn.tree import export_graphviz
 from sklearn import tree
+from sklearn.tree import DecisionTreeRegressor
+
 
 from sklearn.model_selection import train_test_split #separa data
 
@@ -82,7 +84,7 @@ def save_fig(fig_id,tight_layout=True,fig_extension="png", resolution=300):
     
     plt.savefig(path, format=fig_extension ,dpi=resolution)
 
-def plot_decision_boundary(clf, X, y, axes=[0, 7.5, 1, 3], iris=True, legend=False,
+def plot_decision_boundary(clf, X, y, axes=[0, 7.5, 0, 3], iris=True, legend=False,
 plot_training=True):
     x1s = np.linspace(axes[0], axes[1], 100)
     x2s = np.linspace(axes[2], axes[3], 100)
@@ -108,8 +110,6 @@ plot_training=True):
     if legend:
         plt.legend(loc="lower right", fontsize=14)
 
-
-
 def main():
     ##-----------------------------------------DATA SET IRIS --------------------------------
     #CARGO DATA SET
@@ -125,7 +125,7 @@ def main():
     X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2)
 
     #GENERACION DEL MODELO
-    tree_clf = tree.DecisionTreeClassifier()
+    tree_clf = tree.DecisionTreeClassifier(max_depth=5)
     
     #PRUEBA MODELO - TRAIN
     tree_clf = tree_clf.fit(X_train,y_train)
@@ -167,34 +167,19 @@ def main():
     
     #VISUALIZAR LAS PARTICIONES GENERADAS POR CADA SPLIT (SOLO PARA DATA SET IRIS)
     iris = datasets.load_iris()
+    pair=1
     X = iris.data
     y = iris.target
-
-    plt.figure(figsize=(8,4))
-    plot_decision_boundary(tree_clf,X,y)
-    plt.plot([2.45,2.45],[0,3],"k-",linewidth=2)
-    plt.plot([2.45,7.5],[1.75,1.75],"k--",linewidth=2)
-    plt.text(1.40,1.0,"Depth=0",fontsize=15)
-    plt.text(3.2,1.80,"Depth=1",fontsize=13)
-    save_fig("decision_tree_decision_boundaries_plot_completo")
+    
+    plt.figure(figsize=(8, 4))
+    plot_decision_boundary(tree_clf, X, y)
+    plt.plot([2.45, 2.45], [0, 3], "k-", linewidth=2)
+    plt.plot([2.45, 7.5], [1.75, 1.75], "k--", linewidth=2)
+    plt.text(1.40, 1.0, "Depth=0", fontsize=15)
+    plt.text(3.2, 1.80, "Depth=1", fontsize=13)
+    save_fig("decision_tree_decision_boundaries_plot")
     plt.show()
 
-
-    plot_decision_boundary(tree_clf,X_train,y_train)
-    plt.plot([2.45,2.45],[0,3],"k-",linewidth=2)
-    plt.plot([2.45,7.5],[1.75,1.75],"k--",linewidth=2)
-    plt.text(1.40,1.0,"Depth=0",fontsize=15)
-    plt.text(3.2,1.80,"Depth=1",fontsize=13)
-    save_fig("decision_tree_decision_boundaries_plot_train")
-    plt.show()
-
-    plot_decision_boundary(tree_clf,X_test,y_test)
-    plt.plot([2.45,2.45],[0,3],"k-",linewidth=2)
-    plt.plot([2.45,7.5],[1.75,1.75],"k--",linewidth=2)
-    plt.text(1.40,1.0,"Depth=0",fontsize=15)
-    plt.text(3.2,1.80,"Depth=1",fontsize=13)
-    save_fig("decision_tree_decision_boundaries_plot_test")
-    plt.show()
 
 
 
@@ -458,16 +443,18 @@ def main():
     print(conf_matrix)
 
     #ESPACIO ROC
+
+    
+
     y_score1 = tree_clf.predict_proba(X_test)[:,1]
-    false_positive_rate1 , true_positive_rate1,threshold1 = roc_curve(y_test,y_score1)
+
+    fpr, tpr, thresholds = roc_curve(y_test, y_score1, pos_label= 1)
     print("roc_auc_score data set cancer" , roc_auc_score(y_test,y_score1))
 
     plt.plot(1)
     plt.title("Data set cancer")
-    plt.plot(false_positive_rate1,true_positive_rate1,color="red")
-
+    plt.plot(fpr, tpr, color="blue",label = "dt")
     plt.plot([0,1] , [0,1] , color="navy" , lw=lw , linestyle='--')
-
     plt.show()
 
     #DESEMPEÑO RESPECTO A Regresion logistica - KNN - Naive Bayes 

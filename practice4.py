@@ -181,8 +181,6 @@ def main():
     plt.show()
 
 
-
-
     #MATRIZ DE CONFUSION
     print("Matriz de confusion")
     y_pred = tree_clf.predict(X_test)
@@ -190,21 +188,17 @@ def main():
     print(conf_matrix)
 
 
-    
-
-
     #DESEMPEÑO RESPECTO A Regresion logistica - KNN - Naive Bayes 
     pipe = make_pipeline(StandardScaler(), LogisticRegression())
     pipe.fit(X_train,y_train)
 
-
     clf = LogisticRegression()
     knn = KNeighborsClassifier(algorithm='brute',n_neighbors=20)
     nb = GaussianNB()
-
     
     knn.fit(X_train,y_train)
     nb.fit(X_train,y_train)
+
 
     score_clf = pipe.score(X_train,y_train)
     print("Score clf",score_clf)
@@ -243,6 +237,8 @@ def main():
         plt.plot(fpr[i], tpr[i], color=color, lw=lw,
                 label='ROC curve of class {0} (area = {1:0.2f})'
                 ''.format(i, roc_auc[i]))
+
+
 
     plt.plot([0, 1], [0, 1], 'k--', lw=lw)
     plt.xlim([-0.05, 1.0])
@@ -442,20 +438,6 @@ def main():
     conf_matrix = confusion_matrix(y_test,y_pred)
     print(conf_matrix)
 
-    #ESPACIO ROC
-
-    
-
-    y_score1 = tree_clf.predict_proba(X_test)[:,1]
-
-    fpr, tpr, thresholds = roc_curve(y_test, y_score1, pos_label= 1)
-    print("roc_auc_score data set cancer" , roc_auc_score(y_test,y_score1))
-
-    plt.plot(1)
-    plt.title("Data set cancer")
-    plt.plot(fpr, tpr, color="blue",label = "dt")
-    plt.plot([0,1] , [0,1] , color="navy" , lw=lw , linestyle='--')
-    plt.show()
 
     #DESEMPEÑO RESPECTO A Regresion logistica - KNN - Naive Bayes 
     pipe = make_pipeline(StandardScaler(), LogisticRegression())
